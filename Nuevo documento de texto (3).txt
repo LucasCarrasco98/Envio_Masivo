@@ -1,0 +1,55 @@
+Sub ReliazarEnvioMasivo()
+
+    Dim rng As Range
+    Dim X
+    Dim mensaje As String
+    
+    
+    Application.ScreenUpdating = False
+    
+    
+    On Error GoTo mensaje1
+    
+    For Each rng In Hoja1.Range("Tabla3[[Nombre ]] ")
+        If (Left(rng.Offset(0, 1), 1) = "+") Then
+        mensaje = VBA.Replace("whatsapp://send?phone=" & rng.Offset(0, 1).Value & "&text=" & _
+        " ¡Hola! " & rng.Value & " Somos Proveeduría M.O llevamos más de 30 años trabajando junto a los choferes de micros y ómnibus, ofreciéndoles los mejores beneficios a través de descuento en cuotas por tu bono de sueldo.¡Para recibir todas nuestras promociones, agéndanos y envía la palabra Agendado! para empezar a recibir todos estos beneficios!", " ", "%20")
+        Else
+        mensaje = VBA.Replace("whatsapp://send?phone=" & "54" & rng.Offset(0, 1).Value & "&text=" & _
+        " ¡Hola! " & rng.Value & " Somos Proveeduría M.O llevamos más de 30 años trabajando junto a los choferes de micros y ómnibus, ofreciéndoles los mejores beneficios a través de descuento en cuotas por tu bono de sueldo.¡Para recibir todas nuestras promociones, agéndanos y envía la palabra Agendado! para empezar a recibir todos estos beneficios!", " ", "%20")
+        End If
+        
+        Hoja2.Activate
+        ActiveSheet.Pictures(1).Select
+         ActiveSheet.Shapes.Range(Array("Imagen 2")).Select
+         ActiveSheet.Pictures.Name
+        
+        Selection.Copy
+        
+        X = ShellExecute(hwnd, "Open", mensaje, &O0, &O0, SW_NORMAL)
+        
+        Call SendKeys("~", True)
+        Application.Wait Now + TimeValue("00:00:03")
+        Call SendKeys("^v", True)
+        Application.Wait Now + TimeValue("00:00:02")
+        Call SendKeys("~", True)
+        
+        Application.CutCopyMode = False
+        
+        Windows(ThisWorkbook.Name).Activate
+        Application.Wait Now + TimeValue("00:00:02")
+        If rng.Offset(0, 1) = "" Then
+        Exit Sub
+        End If
+        
+    Next rng
+    
+    Hoja1.Select
+    
+    Application.ScreenUpdating = True
+    MsgBox "Mensajes enviados con exito", vbInformation
+Exit Sub
+mensaje1:
+MsgBox "No se pudo realizar el envio. Hubo un error."
+
+End Sub
